@@ -35,10 +35,17 @@
         </div>
         
         <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <div class="controls">
-            <button id="startBtn">Start Game</button>
-            <button id="resetBtn">Reset Game</button>
+        
+        <!-- Mobile Controls -->
+        <div id="mobileControls" class="mobile-controls">
+            <button id="upBtn" class="control-btn up-btn">↑</button>
+            <div class="horizontal-controls">
+                <button id="leftBtn" class="control-btn left-btn">←</button>
+                <button id="rightBtn" class="control-btn right-btn">→</button>
+            </div>
+            <button id="downBtn" class="control-btn down-btn">↓</button>
         </div>
+        
         <div class="instructions">
             <h2>How to Play</h2>
             <p>Use the arrow keys to control the snake.</p>

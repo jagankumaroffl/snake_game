@@ -166,6 +166,42 @@ button {
     display: none;
 }
 
+/* Mobile Controls */
+.mobile-controls {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+    gap: 10px;
+}
+
+.horizontal-controls {
+    display: flex;
+    gap: 50px;
+}
+
+.control-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    background-color: #388e3c;
+}
+
 @media (max-width: 500px) {
     #gameCanvas {
         width: 100%;
@@ -176,12 +212,20 @@ button {
         padding: 15px;
     }
     
-    .controls {
-        flex-direction: column;
-        gap: 10px;
+    .mobile-controls {
+        display: flex;
     }
     
-    button {
-        width: 100%;
+    .instructions p:first-of-type {
+        display: none; /* Hide the keyboard instructions on mobile */
+    }
+    
+    .instructions::before {
+        content: "Use the on-screen buttons to control the snake.";
+        display: block;
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+        line-height: 1.4;
     }
 }

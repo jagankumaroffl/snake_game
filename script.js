@@ -4,13 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas.getContext('2d');
     const scoreElement = document.getElementById('score');
     const highScoreElement = document.getElementById('highScore');
-    const startBtn = document.getElementById('startBtn');
-    const resetBtn = document.getElementById('resetBtn');
     const startScreen = document.getElementById('startScreen');
     const gameOverScreen = document.getElementById('gameOverScreen');
     const startGameBtn = document.getElementById('startGameBtn');
     const retryBtn = document.getElementById('retryBtn');
     const finalScoreElement = document.getElementById('finalScore');
+    
+    // Flag to track if we're waiting for key press after game over
+    let waitingForKeyPress = false;
 
     // Game settings
     const gridSize = 20;
@@ -324,6 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
         }
 
+        // Check if we're waiting for key press after game over
+        if (waitingForKeyPress && [37, 38, 39, 40].includes(e.keyCode)) {
+            waitingForKeyPress = false;
+            gameRunning = true;
+            gameLoop();
+        }
+
         // Only change direction if game is running
         if (!gameRunning || gameOver) return;
 
@@ -349,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function startGame() {
+    function startGame(e) {
         if (gameRunning && !gameOver) return;
 
         // Hide screens
@@ -368,14 +376,26 @@ document.addEventListener('DOMContentLoaded', () => {
         food = generateFood();
         gameOver = false;
 
-        // Start game loop if not already running
-        if (!gameRunning) {
-            gameRunning = true;
-            gameLoop();
+        // Check if this is from retry button
+        const isRetry = e && e.target === retryBtn;
+        
+        if (isRetry) {
+            // Set waiting flag and don't start game loop yet
+            waitingForKeyPress = true;
+            gameRunning = false;
+            
+            // Draw initial state
+            clearCanvas();
+            drawGrid();
+            drawSnake();
+            drawFood();
+        } else {
+            // Start game loop if not already running
+            if (!gameRunning) {
+                gameRunning = true;
+                gameLoop();
+            }
         }
-
-        // Change button text
-        startBtn.textContent = 'Restart Game';
     }
 
     function resetGame() {
@@ -402,12 +422,124 @@ document.addEventListener('DOMContentLoaded', () => {
         drawFood();
     }
 
+    // Mobile control functions
+    function handleMobileControls() {
+        // Get mobile control buttons
+        const upBtn = document.getElementById('upBtn');
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+        const downBtn = document.getElementById('downBtn');
+        
+        // Add touch event listeners
+        upBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityY !== 1) {
+                nextVelocityX = 0;
+                nextVelocityY = -1;
+            }
+        });
+        
+        leftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityX !== 1) {
+                nextVelocityX = -1;
+                nextVelocityY = 0;
+            }
+        });
+        
+        rightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityX !== -1) {
+                nextVelocityX = 1;
+                nextVelocityY = 0;
+            }
+        });
+        
+        downBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityY !== -1) {
+                nextVelocityX = 0;
+                nextVelocityY = 1;
+            }
+        });
+        
+        // Also add click events for testing on desktop
+        upBtn.addEventListener('click', () => {
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityY !== 1) {
+                nextVelocityX = 0;
+                nextVelocityY = -1;
+            }
+        });
+        
+        leftBtn.addEventListener('click', () => {
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityX !== 1) {
+                nextVelocityX = -1;
+                nextVelocityY = 0;
+            }
+        });
+        
+        rightBtn.addEventListener('click', () => {
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityX !== -1) {
+                nextVelocityX = 1;
+                nextVelocityY = 0;
+            }
+        });
+        
+        downBtn.addEventListener('click', () => {
+            if (!gameRunning && waitingForKeyPress) {
+                waitingForKeyPress = false;
+                gameRunning = true;
+                gameLoop();
+            }
+            if (gameRunning && !gameOver && velocityY !== -1) {
+                nextVelocityX = 0;
+                nextVelocityY = 1;
+            }
+        });
+    }
+
     // Add event listeners
     document.addEventListener('keydown', handleKeyDown);
-    startBtn.addEventListener('click', startGame);
-    resetBtn.addEventListener('click', resetGame);
     startGameBtn.addEventListener('click', startGame);
     retryBtn.addEventListener('click', startGame);
+    
+    // Initialize mobile controls
+    handleMobileControls();
 
     // Initialize game
     clearCanvas();
